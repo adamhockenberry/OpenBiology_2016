@@ -318,8 +318,8 @@ def plot_individual_kosuri(exp_dicty, gene_binding_dict, asd_seq, spacing):
     plt.legend(loc='best', fontsize=24).get_frame().set_linewidth(0.0)
     plt.tight_layout()
     
-    too_strong = (poly_3.predict(x_plotting)[0])
-    too_weak = (poly_3.predict(x_plotting)[-1])
+    too_strong = (list(poly_3.predict(x_plotting))[0])
+    too_weak = (list(poly_3.predict(x_plotting))[-1])
     just_right = (max(poly_3.predict(x_plotting)))
     print (poly_1.summary())
     print (poly_3.summary())
