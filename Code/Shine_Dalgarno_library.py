@@ -114,13 +114,14 @@ def plot_individual(trans_eff_dict, five_prime_seq_dict, seq_dict, energy_file, 
         plt.tick_params(labelsize=24)
         plt.legend(loc=4, fontsize=24).get_frame().set_linewidth(0.0)
         plt.tight_layout()
-    too_strong = (poly_3.predict(x_plotting)[0])
-    too_weak = (poly_3.predict(x_plotting)[-1])
+    too_strong = (list(poly_3.predict(x_plotting))[0])
+    too_weak = (list(poly_3.predict(x_plotting))[-1])
     just_right = (max(poly_3.predict(x_plotting)))
     print (poly_1.summary())
     print (poly_3.summary())
     
     bin_edges = stats.mstats.mquantiles(df.sdness, [0, 0.2, 0.4, 0.6, 0.8, 1])
+    
 
     bar_dicty = {}
     for j in range(len(bin_edges)-1):
@@ -135,6 +136,10 @@ def plot_individual(trans_eff_dict, five_prime_seq_dict, seq_dict, energy_file, 
                 if df.loc[i]['sdness'] >= bin_edges[j]:
                     bar_dicty['{:.2f} to {:.2f}'.format(bin_edges[j], bin_edges[j+1])].append(df.loc[i]['teff'])
                     break
+    
+    non_sd_bin = bar_dicty['{:.2f} to {:.2f}'.format(bin_edges[4], bin_edges[5])]
+    sd_bin = bar_dicty['{:.2f} to {:.2f}'.format(bin_edges[1], bin_edges[2])]
+    percents = np.power(2, np.mean(sd_bin))/np.power(2, np.mean(non_sd_bin))-1
     
     plot_list = []
     labels = ['']
@@ -390,7 +395,7 @@ def teff_given_structure(transEffDict, structureDict):
     structureList = [structureDict[i] for i in transEffDict]
     a, b, c, d, e = stats.linregress(structureList, transEffList)
     
-    print(a,b,c,d,e, '***', c**2)
+    print('Return from stats.linregress followed by r-squared:', a,b,c,d,e, '***', c**2)
 
 
     correctedDict = {}
@@ -399,7 +404,7 @@ def teff_given_structure(transEffDict, structureDict):
 
     correctedList = [correctedDict[i] for i in transEffDict]
     a, b, c, d, e = stats.linregress(structureList, correctedList)
-    print(a,b,c,d,e)
+    print('And stats.linregress on corrected values should be minimal:', a,b,c,d,e)
     
     fig = plt.figure(figsize=(12,6))
     ax1 = fig.add_subplot(121)
